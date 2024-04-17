@@ -18,10 +18,6 @@
  */
 package ch.njol.skript.util;
 
-import org.bukkit.Bukkit;
-import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.effects.Delay;
 import ch.njol.skript.lang.Effect;
@@ -29,6 +25,10 @@ import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.variables.Variables;
+import co.aikar.timings.Timing;
+import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Effects that extend this class are ran asynchronously. Next trigger item will be ran
@@ -61,11 +61,11 @@ public abstract class AsyncEffect extends Effect {
 			
 			if (getNext() != null) {
 				Bukkit.getScheduler().runTask(Skript.getInstance(), () -> { // Walk to next item synchronously
-					Object timing = null;
+					Timing timing = null;
 					if (SkriptTimings.enabled()) { // getTrigger call is not free, do it only if we must
 						Trigger trigger = getTrigger();
 						if (trigger != null) {
-							timing = SkriptTimings.start(trigger.getDebugLabel());
+							timing = (Timing) SkriptTimings.start(trigger.getTimingName());
 						}
 					}
 					

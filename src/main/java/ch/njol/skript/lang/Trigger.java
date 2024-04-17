@@ -18,10 +18,10 @@
  */
 package ch.njol.skript.lang;
 
-import org.skriptlang.skript.lang.script.Script;
 import ch.njol.skript.variables.Variables;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
+import org.skriptlang.skript.lang.script.Script;
 
 import java.util.List;
 
@@ -121,6 +121,11 @@ public class Trigger extends TriggerSection {
 
 	public String getDebugLabel() {
 		return debugLabel;
+	}
+
+	public String getTimingName() {
+		assert getScript() != null;
+		return getName() + ": " + getScript().getConfig().getFileName() + " line " + getLineNumber();
 	}
 
 }

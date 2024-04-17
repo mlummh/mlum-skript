@@ -18,15 +18,22 @@
  */
 package ch.njol.skript.timings;
 
-import org.eclipse.jdt.annotation.Nullable;
-
 import ch.njol.skript.Skript;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import co.aikar.timings.TimingsManager;
+import com.google.common.base.Preconditions;
+import org.bukkit.plugin.Plugin;
+import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Static utils for Skript timings.
  */
+@SuppressWarnings({"removal"})
 public class SkriptTimings {
 	
 	private static volatile boolean enabled;
@@ -37,7 +44,7 @@ public class SkriptTimings {
 	public static Object start(String name) {
 		if (!enabled()) // Timings disabled :(
 			return null;
-		Timing timing = Timings.of(skript, name);
+		Timing timing = SkriptTimings.of(skript, name);
 		timing.startTimingIfSync(); // No warning spam in async code
 		assert timing != null;
 		return timing;
@@ -61,6 +68,33 @@ public class SkriptTimings {
 	
 	public static void setSkript(Skript plugin) {
 		skript = plugin;
+	}
+
+
+	@NotNull
+	public static Timing of(@NotNull Plugin plugin, @NotNull String name) {
+		try {
+			Method method = Timings.class.getDeclaredMethod("ofSafe", String.class, String.class, Timing.class);
+			method.setAccessible(true);
+			//pluginHandler = Timings.ofSafe(plugin.getName(), "Combined Total", TimingsManager.PLUGIN_GROUP_HANDLER);
+			Timing pluginHandler = (Timing) method.invoke(null, plugin.getName(), "Combined Total", TimingsManager.PLUGIN_GROUP_HANDLER);
+			return SkriptTimings.of(plugin, name, pluginHandler);
+		} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@NotNull
+	public static Timing of(@NotNull Plugin plugin, @NotNull String name, @Nullable Timing groupHandler) {
+		Preconditions.checkNotNull(plugin, "Plugin can not be null");
+		try {
+			Method method = TimingsManager.class.getDeclaredMethod("getHandler", String.class, String.class, Timing.class);
+			method.setAccessible(true);
+			return (Timing) method.invoke(null, plugin.getName(), name, groupHandler);
+		} catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+		//return TimingsManager.getHandler(plugin.getName(), name, groupHandler);
 	}
 	
 }
