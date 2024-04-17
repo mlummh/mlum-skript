@@ -18,11 +18,7 @@
  */
 package ch.njol.skript;
 
-import ch.njol.skript.config.Config;
-import ch.njol.skript.config.EnumParser;
-import ch.njol.skript.config.Option;
-import ch.njol.skript.config.OptionSection;
-import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.config.*;
 import ch.njol.skript.hooks.Hook;
 import ch.njol.skript.hooks.VaultHook;
 import ch.njol.skript.hooks.regions.GriefPreventionHook;
@@ -41,7 +37,6 @@ import ch.njol.skript.util.Version;
 import ch.njol.skript.util.chat.ChatMessages;
 import ch.njol.skript.util.chat.LinkParseMode;
 import ch.njol.skript.variables.Variables;
-import co.aikar.timings.Timings;
 import org.bukkit.event.EventPriority;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -207,12 +202,12 @@ public class SkriptConfig {
 					SkriptTimings.setEnabled(false); // Just to be sure, deactivate timings support completely
 					return;
 				}
-				if (Timings.class.isAnnotationPresent(Deprecated.class)) { // check for deprecated Timings
-					if (t) // Warn the server admin that timings won't work
-						Skript.warning("Timings cannot be enabled! Paper no longer supports Timings as of 1.19.4.");
-					SkriptTimings.setEnabled(false); // Just to be sure, deactivate timings support completely
-					return;
-				}
+//				if (Timings.class.isAnnotationPresent(Deprecated.class)) { // check for deprecated Timings
+//					if (t) // Warn the server admin that timings won't work
+//						Skript.warning("Timings cannot be enabled! Paper no longer supports Timings as of 1.19.4.");
+//					SkriptTimings.setEnabled(false); // Just to be sure, deactivate timings support completely
+//					return;
+//				}
 				// If we get here, we can safely enable timings
 				if (t)
 					Skript.info("Timings support enabled!");

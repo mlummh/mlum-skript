@@ -19,8 +19,6 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.sections.EffSecSpawn;
-import ch.njol.skript.sections.EffSecSpawn.SpawnEvent;
 import ch.njol.skript.bukkitutil.EntityUtils;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -31,11 +29,12 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.lang.TriggerItem;
-import ch.njol.skript.lang.TriggerSection;
+import ch.njol.skript.sections.EffSecSpawn.SpawnEvent;
 import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.util.Direction;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
+import co.aikar.timings.Timing;
 import io.papermc.lib.PaperLib;
 import io.papermc.lib.environments.PaperEnvironment;
 import org.bukkit.Location;
@@ -140,12 +139,12 @@ public class EffTeleport extends Effect {
 				Variables.setLocalVariables(e, localVars);
 			
 			// Continue the rest of the trigger if there is one
-			Object timing = null;
+			Timing timing = null;
 			if (next != null) {
 				if (SkriptTimings.enabled()) {
 					Trigger trigger = getTrigger();
 					if (trigger != null) {
-						timing = SkriptTimings.start(trigger.getDebugLabel());
+						timing = (Timing) SkriptTimings.start(trigger.getTimingName());
 					}
 				}
 
