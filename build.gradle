@@ -118,24 +118,23 @@ processResources {
 }
 
 publishing {
-	publications {
-		maven(MavenPublication) {
-			groupId 'com.github.SkriptLang'
-			artifactId 'Skript'
-			version project.version
-			artifact sourceJar
-			artifact tasks.jar
+	repositories {
+		maven {
+			name = "mlum"
+			url = "https://repo.mlum.io/releases"
+			credentials(PasswordCredentials)
+			authentication {
+				basic(BasicAuthentication)
+			}
 		}
 	}
 
-	repositories {
-		maven {
-			name = 'repo'
-			url = 'https://repo.mlum.io/releases'
-			credentials {
-				username = project.findProperty("PmlumUsername")
-				password = project.findProperty("PmlumPassword")
-			}
+	publications {
+		maven(MavenPublication) {
+			groupId "com.github.SkriptLang"
+			artifactId "Skript"
+			version version
+			artifact shadowJar
 		}
 	}
 }
