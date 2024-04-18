@@ -61,12 +61,12 @@ task testJar(type: ShadowJar) {
 
 task jar(overwrite: true, type: ShadowJar) {
 	dependsOn checkAliases
-	archiveFileName = jarName
+	archiveFileName = jarName ? 'Skript.jar' : jarName
 	from sourceSets.main.output
 }
 
 task build(overwrite: true, type: ShadowJar) {
-	archiveFileName = jarName
+	archiveFileName = jarName ? 'Skript.jar' : jarName
 	from sourceSets.main.output
 }
 
@@ -131,10 +131,11 @@ publishing {
 
 	publications {
 		maven(MavenPublication) {
-			groupId "com.github.SkriptLang"
-			artifactId "Skript"
-			version version
-			artifact shadowJar
+			groupId 'com.github.SkriptLang'
+			artifactId 'Skript'
+			version project.version
+			artifact sourceJar
+			artifact tasks.jar
 		}
 	}
 }
