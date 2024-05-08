@@ -119,6 +119,17 @@ processResources {
 }
 
 publishing {
+	repositories {
+		maven {
+			name = "mlum"
+			url = "https://repo.mlum.io/releases"
+			credentials(PasswordCredentials)
+			authentication {
+				basic(BasicAuthentication)
+			}
+		}
+	}
+
 	publications {
 		maven(MavenPublication) {
 			groupId 'com.github.SkriptLang'
@@ -126,17 +137,6 @@ publishing {
 			version project.version
 			artifact sourceJar
 			artifact tasks.jar
-		}
-	}
-
-	repositories {
-		maven {
-			name = 'repo'
-			url = 'https://repo.skriptlang.org/releases'
-			credentials {
-				username = System.getenv('MAVEN_USERNAME')
-				password = System.getenv('MAVEN_PASSWORD')
-			}
 		}
 	}
 }
