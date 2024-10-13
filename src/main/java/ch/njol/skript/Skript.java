@@ -23,7 +23,6 @@ import ch.njol.skript.test.runner.SkriptJUnitTest;
 import ch.njol.skript.test.runner.SkriptTestEvent;
 import ch.njol.skript.test.runner.TestMode;
 import ch.njol.skript.test.runner.TestTracker;
-import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.update.ReleaseManifest;
 import ch.njol.skript.update.ReleaseStatus;
 import ch.njol.skript.update.UpdateManifest;
@@ -816,9 +815,6 @@ public final class Skript extends JavaPlugin implements Listener {
 				}
 			}
 		}, this);
-
-		// Tell Timings that we are here!
-		SkriptTimings.setSkript(this);
 	}
 
 	/**

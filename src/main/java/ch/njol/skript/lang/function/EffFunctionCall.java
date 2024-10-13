@@ -18,6 +18,7 @@
  */
 package ch.njol.skript.lang.function;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.Timing;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,11 +27,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.util.Kleenean;
-import co.aikar.timings.Timing;
-import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * @author Peter Güttinger
@@ -53,10 +50,8 @@ public class EffFunctionCall extends Effect {
 	
 	@Override
 	protected void execute(final Event e) {
-		Timing t = (Timing) SkriptTimings.start(function.script + " function " + function.functionName + "()");
 		function.execute(e);
 		function.resetReturnValue(); // Function might have return value that we're ignoring
-		SkriptTimings.stop(t);
 	}
 	
 	@Override

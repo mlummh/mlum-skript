@@ -25,9 +25,7 @@ import ch.njol.skript.events.bukkit.ScheduledNoWorldEvent;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.util.Timespan;
-import co.aikar.timings.Timing;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.Event;
@@ -120,9 +118,7 @@ public class EvtPeriodical extends SkriptEvent {
 		ScheduledEvent event = world == null ? new ScheduledNoWorldEvent() : new ScheduledEvent(world);
 		SkriptEventHandler.logEventStart(event);
 		SkriptEventHandler.logTriggerStart(trigger);
-		Timing timing = (Timing) SkriptTimings.start(trigger.getTimingName());
 		trigger.execute(event);
-		SkriptTimings.stop(timing);
 		SkriptEventHandler.logTriggerEnd(trigger);
 		SkriptEventHandler.logEventEnd();
 	}

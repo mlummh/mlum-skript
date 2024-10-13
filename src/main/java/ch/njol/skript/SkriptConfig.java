@@ -11,7 +11,6 @@ import ch.njol.skript.lang.function.Function;
 import ch.njol.skript.localization.Language;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.log.Verbosity;
-import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.update.ReleaseChannel;
 import ch.njol.skript.util.FileUtils;
 import ch.njol.skript.util.Timespan;
@@ -184,22 +183,7 @@ public class SkriptConfig {
 	
 	public static final Option<Boolean> enableTimings = new Option<>("enable timings", false)
 			.setter(t -> {
-				if (!Skript.classExists("co.aikar.timings.Timings")) { // Check for Timings
-					if (t) // Warn the server admin that timings won't work
-						Skript.warning("Timings cannot be enabled! You are running Bukkit/Spigot, but Paper is required.");
-					SkriptTimings.setEnabled(false); // Just to be sure, deactivate timings support completely
-					return;
-				}
-//				if (Timings.class.isAnnotationPresent(Deprecated.class)) { // check for deprecated Timings
-//					if (t) // Warn the server admin that timings won't work
-//						Skript.warning("Timings cannot be enabled! Paper no longer supports Timings as of 1.19.4.");
-//					SkriptTimings.setEnabled(false); // Just to be sure, deactivate timings support completely
-//					return;
-//				}
-				// If we get here, we can safely enable timings
-				if (t)
-					Skript.info("Timings support enabled!");
-				SkriptTimings.setEnabled(t); // Config option will be used
+				// do nothing since there are no timings
 			});
 	
 	public static final Option<String> parseLinks = new Option<>("parse links in chat messages", "disabled")

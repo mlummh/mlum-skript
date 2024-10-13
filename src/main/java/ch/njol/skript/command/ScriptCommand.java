@@ -35,7 +35,6 @@ import ch.njol.skript.log.LogEntry;
 import ch.njol.skript.log.ParseLogHandler;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.log.Verbosity;
-import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.EmptyStacktraceException;
 import ch.njol.skript.util.Timespan;
@@ -284,10 +283,8 @@ public class ScriptCommand implements TabExecutor {
 			if (sender instanceof Player)
 				previousLastUsage = getLastUsage(((Player) sender).getUniqueId(), event);
 
-			Timing timing = (Timing) SkriptTimings.start(trigger.getTimingName());
 			// execute the command - may modify the last usage date
 			execute2(event, sender, commandLabel, rest);
-			SkriptTimings.stop(timing);
 
 			if (sender instanceof Player && !event.isCooldownCancelled()) {
 				Date lastUsage = getLastUsage(((Player) sender).getUniqueId(), event);

@@ -25,11 +25,9 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.util.Timespan;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
-import co.aikar.timings.Timing;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
@@ -94,17 +92,8 @@ public class Delay extends Effect {
 				if (localVars != null)
 					Variables.setLocalVariables(event, localVars);
 
-				Timing timing = null; // Timings reference must be kept so that it can be stopped after TriggerItem execution
-				if (SkriptTimings.enabled()) { // getTrigger call is not free, do it only if we must
-					Trigger trigger = getTrigger();
-					if (trigger != null)
-						timing = (Timing) SkriptTimings.start(trigger.getTimingName());
-				}
-
 				TriggerItem.walk(next, event);
 				Variables.removeLocals(event); // Clean up local vars, we may be exiting now
-
-				SkriptTimings.stop(timing); // Stop timing if it was even started
 			}, Math.max(duration.getTicks(), 1)); // Minimum delay is one tick, less than it is useless!
 		}
 		return null;
