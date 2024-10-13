@@ -46,7 +46,7 @@ import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.plugin.SimplePluginManager;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.skriptlang.skript.lang.script.Script;
 
@@ -157,9 +157,18 @@ public abstract class Commands {
 			String arguments = cmd.length == 1 ? "" : "" + cmd[1];
 			ScriptCommand command = commands.get(label);
 
-			// if so, check permissions
-			if (command != null && !command.checkPermissions(event.getPlayer(), label, arguments))
-				event.setCancelled(true);
+			// is it a skript command?
+			if (command != null) {
+				// if so, check permissions to handle ourselves
+				if (!command.checkPermissions(event.getPlayer(), label, arguments))
+					event.setCancelled(true);
+
+				// we can also handle case sensitivity here:
+				if (SkriptConfig.caseInsensitiveCommands.value()) {
+					cmd[0] = event.getMessage().charAt(0) + label;
+					event.setMessage(String.join(" ", cmd));
+				}
+			}
 		}
 
 		@SuppressWarnings("null")

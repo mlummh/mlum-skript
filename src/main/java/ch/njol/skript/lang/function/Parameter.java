@@ -32,7 +32,7 @@ import ch.njol.skript.util.LiteralUtils;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.NonNullPair;
 import ch.njol.util.StringUtils;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 
 public final class Parameter<T> {
 
-	public final static Pattern PARAM_PATTERN = Pattern.compile("\\s*(.+?)\\s*:(?=[^:]*$)\\s*(.+?)(?:\\s*=\\s*(.+))?\\s*");
+	public final static Pattern PARAM_PATTERN = Pattern.compile("^\\s*([^:(){}\",]+?)\\s*:\\s*([a-zA-Z ]+?)\\s*(?:\\s*=\\s*(.+))?\\s*$");
 
 	/**
 	 * Name of this parameter. Will be used as name for the local variable

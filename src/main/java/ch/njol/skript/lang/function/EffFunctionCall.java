@@ -18,6 +18,9 @@
  */
 package ch.njol.skript.lang.function;
 
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
+
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ParseContext;

@@ -18,6 +18,10 @@
  */
 package ch.njol.skript.util;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
+
 import ch.njol.skript.Skript;
 import ch.njol.skript.effects.Delay;
 import ch.njol.skript.lang.Effect;
@@ -28,7 +32,6 @@ import ch.njol.skript.variables.Variables;
 import co.aikar.timings.Timing;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Effects that extend this class are ran asynchronously. Next trigger item will be ran

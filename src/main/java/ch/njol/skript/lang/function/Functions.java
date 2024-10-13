@@ -30,7 +30,7 @@ import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.NonNullPair;
 import ch.njol.util.StringUtils;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.script.Script;
 
 import java.util.ArrayList;
@@ -121,7 +121,7 @@ public abstract class Functions {
 			Skript.debug((signature.local ? "local " : "") + "function " + name + "(" + StringUtils.join(params, ", ") + ")"
 				+ (c != null ? " :: " + (signature.isSingle() ? c.getName().getSingular() : c.getName().getPlural()) : "") + ":");
 
-		Function<?> f = new ScriptFunction<>(signature, script, node);
+		Function<?> f = new ScriptFunction<>(signature, node);
 
 		// Register the function for signature
 		namespace.addFunction(f);

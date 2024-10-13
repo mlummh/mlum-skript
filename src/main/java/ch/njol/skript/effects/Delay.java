@@ -32,7 +32,7 @@ import ch.njol.util.Kleenean;
 import co.aikar.timings.Timing;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Set;

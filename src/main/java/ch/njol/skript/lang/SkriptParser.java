@@ -50,14 +50,13 @@ import ch.njol.util.StringUtils;
 import ch.njol.util.coll.CollectionUtils;
 import com.google.common.primitives.Booleans;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.skriptlang.skript.lang.script.Script;
 import org.skriptlang.skript.lang.script.ScriptWarning;
 
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,7 +75,7 @@ import java.util.stream.Stream;
  * Used for parsing my custom patterns.<br>
  * <br>
  * Note: All parse methods print one error at most xor any amount of warnings and lower level log messages. If the given string doesn't match any pattern then nothing is printed.
- * 
+ *
  * @author Peter Güttinger
  */
 public class SkriptParser {
@@ -102,7 +101,7 @@ public class SkriptParser {
 	 * Constructs a new SkriptParser object that can be used to parse the given expression.
 	 * <p>
 	 * A SkriptParser can be re-used indefinitely for the given expression, but to parse a new expression a new SkriptParser has to be created.
-	 * 
+	 *
 	 * @param expr The expression to parse
 	 * @param flags Some parse flags ({@link #PARSE_EXPRESSIONS}, {@link #PARSE_LITERALS})
 	 * @param context The parse context
@@ -371,7 +370,7 @@ public class SkriptParser {
 				if (parsedExpression != null) { // Expression/VariableString parsing success
 					for (Class<? extends T> type : types) {
 						// Check return type against everything that expression accepts
-						if (type.isAssignableFrom(parsedExpression.getReturnType())) {
+						if (parsedExpression.canReturn(type)) {
 							log.printLog();
 							return (Expression<? extends T>) parsedExpression;
 						}
@@ -541,17 +540,13 @@ public class SkriptParser {
 			if ((flags & PARSE_EXPRESSIONS) != 0) {
 				Expression<?> parsedExpression = parseExpression(types, expr);
 				if (parsedExpression != null) { // Expression/VariableString parsing success
-					Class<?> returnType = parsedExpression.getReturnType(); // Sometimes getReturnType does non-trivial costly operations
-					if (returnType == null)
-						throw new SkriptAPIException("Expression '" + expr + "' returned null for method Expression#getReturnType. Null is not a valid return.");
-
 					for (int i = 0; i < types.length; i++) {
 						Class<?> type = types[i];
 						if (type == null) // Ignore invalid (null) types
 							continue;
 
 						// Check return type against everything that expression accepts
-						if (type.isAssignableFrom(returnType)) {
+						if (parsedExpression.canReturn(type)) {
 							if (!exprInfo.isPlural[i] && !parsedExpression.isSingle()) { // Wrong number of arguments
 								if (context == ParseContext.COMMAND) {
 									Skript.error(Commands.m_too_many_arguments.toString(exprInfo.classes[i].getName().getIndefiniteArticle(), exprInfo.classes[i].getName().toString()), ErrorQuality.SEMANTIC_ERROR);
@@ -605,6 +600,16 @@ public class SkriptParser {
 				if (parsedObject != null) {
 					log.printLog();
 					return new SimpleLiteral<>(parsedObject, false, new UnparsedLiteral(expr));
+				}
+			}
+			if (expr.startsWith("\"") && expr.endsWith("\"") && expr.length() > 1) {
+				for (ClassInfo<?> aClass : exprInfo.classes) {
+					if (!aClass.getC().isAssignableFrom(String.class))
+						continue;
+					VariableString string = VariableString.newInstance(expr.substring(1, expr.length() - 1));
+					if (string instanceof LiteralString)
+						return string;
+					break;
 				}
 			}
 			log.printError();
@@ -752,11 +757,15 @@ public class SkriptParser {
 			exprReturnTypes[i] = parsedExpressions.get(i).getReturnType();
 
 		if (isLiteralList) {
-			Literal<T>[] literals = parsedExpressions.toArray(new Literal[parsedExpressions.size()]);
-			return new LiteralList<>(literals, (Class<T>) Classes.getSuperClassInfo(exprReturnTypes).getC(), !and.isFalse());
+			//noinspection unchecked,SuspiciousToArrayCall
+			Literal<T>[] literals = parsedExpressions.toArray(new Literal[0]);
+			//noinspection unchecked
+			return new LiteralList<>(literals, (Class<T>) Classes.getSuperClassInfo(exprReturnTypes).getC(), exprReturnTypes, !and.isFalse());
 		} else {
-			Expression<T>[] expressions = parsedExpressions.toArray(new Expression[parsedExpressions.size()]);
-			return new ExpressionList<>(expressions, (Class<T>) Classes.getSuperClassInfo(exprReturnTypes).getC(), !and.isFalse());
+			//noinspection unchecked
+			Expression<T>[] expressions = parsedExpressions.toArray(new Expression[0]);
+			//noinspection unchecked
+			return new ExpressionList<>(expressions, (Class<T>) Classes.getSuperClassInfo(exprReturnTypes).getC(), exprReturnTypes, !and.isFalse());
 		}
 	}
 
@@ -885,10 +894,10 @@ public class SkriptParser {
 
 			if (isLiteralList) {
 				Literal<?>[] literals = parsedExpressions.toArray(new Literal[parsedExpressions.size()]);
-				return new LiteralList(literals, Classes.getSuperClassInfo(exprReturnTypes).getC(), !and.isFalse());
+				return new LiteralList(literals, Classes.getSuperClassInfo(exprReturnTypes).getC(), exprReturnTypes, !and.isFalse());
 			} else {
 				Expression<?>[] expressions = parsedExpressions.toArray(new Expression[parsedExpressions.size()]);
-				return new ExpressionList(expressions, Classes.getSuperClassInfo(exprReturnTypes).getC(), !and.isFalse());
+				return new ExpressionList(expressions, Classes.getSuperClassInfo(exprReturnTypes).getC(), exprReturnTypes, !and.isFalse());
 
 			}
 		} finally {
@@ -1023,8 +1032,28 @@ public class SkriptParser {
 	}
 
 	/**
+	 * Parses the text as the given pattern with the given parse context and parse flags.
+	 * <p>
+	 * Prints parse errors (i.e. must start a ParseLog before calling this method)
+	 */
+	@Nullable
+	public static ParseResult parse(String text, String pattern, int parseFlags, ParseContext parseContext) {
+		return new SkriptParser(text, parseFlags, parseContext).parse_i(pattern);
+	}
+
+	/**
+	 * Parses the text as the given pattern with the given parse context and parse flags.
+	 * <p>
+	 * Prints parse errors (i.e. must start a ParseLog before calling this method)
+	 */
+	@Nullable
+	public static ParseResult parse(String text, SkriptPattern pattern, int parseFlags, ParseContext parseContext) {
+		return parse(text, pattern.toString(), parseFlags, parseContext);
+	}
+
+	/**
 	 * Finds the closing bracket of the group at <tt>start</tt> (i.e. <tt>start</tt> has to be <i>in</i> a group).
-	 * 
+	 *
 	 * @param pattern The string to search in
 	 * @param closingBracket The bracket to look for, e.g. ')'
 	 * @param openingBracket A bracket that opens another group, e.g. '('
@@ -1075,7 +1104,7 @@ public class SkriptParser {
 
 	/**
 	 * Counts how often the given character occurs in the given string, ignoring any escaped occurrences of the character.
-	 * 
+	 *
 	 * @param haystack The string to search in
 	 * @param needle The character to search for
 	 * @return The number of unescaped occurrences of the given character
@@ -1110,7 +1139,7 @@ public class SkriptParser {
 
 	/**
 	 * Find the next unescaped (i.e. single) double quote in the string.
-	 * 
+	 *
 	 * @param string The string to search in
 	 * @param start Index after the starting quote
 	 * @return Index of the end quote
@@ -1152,7 +1181,15 @@ public class SkriptParser {
 				}
 				Class<?> c = types[i];
 				assert c != null;
-				message.append(Classes.getSuperClassInfo(c).getName().withIndefiniteArticle());
+				ClassInfo<?> classInfo = Classes.getSuperClassInfo(c);
+				// if there's a registered class info,
+				if (classInfo != null) {
+					// use the article,
+					message.append(classInfo.getName().withIndefiniteArticle());
+				} else {
+					// otherwise fallback to class name
+					message.append(c.getName());
+				}
 			}
 			return message.toString();
 		}
@@ -1181,7 +1218,7 @@ public class SkriptParser {
 	 * Returns the next character in the expression, skipping strings,
 	 * variables and parentheses
 	 * (unless {@code context} is {@link ParseContext#COMMAND} or {@link ParseContext#PARSE}).
-	 * 
+	 *
 	 * @param expr The expression to traverse.
 	 * @param startIndex The index to start at.
 	 * @return The next index (can be expr.length()), or -1 if
@@ -1299,7 +1336,7 @@ public class SkriptParser {
 
 	/**
 	 * Validates a user-defined pattern (used in {@link ExprParse}).
-	 * 
+	 *
 	 * @param pattern The pattern string to validate
 	 * @return The pattern with %codenames% and a boolean array that contains whether the expressions are plural or not
 	 */

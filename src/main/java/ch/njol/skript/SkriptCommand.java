@@ -41,7 +41,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.script.Script;
 
 import java.io.File;
@@ -62,19 +62,19 @@ public class SkriptCommand implements CommandExecutor {
 	// TODO /skript scripts show/list - lists all enabled and/or disabled scripts in the scripts folder and/or subfolders (maybe add a pattern [using * and **])
 	// TODO document this command on the website
 	private static final CommandHelp SKRIPT_COMMAND_HELP = new CommandHelp("<gray>/<gold>skript", SkriptColor.LIGHT_CYAN, CONFIG_NODE + ".help")
-		.add(new CommandHelp("reload", SkriptColor.DARK_RED)
+		.add(new CommandHelp("reload", SkriptColor.DARK_CYAN)
 			.add("all")
 			.add("config")
 			.add("aliases")
 			.add("scripts")
 			.add("<script>")
-		).add(new CommandHelp("enable", SkriptColor.DARK_RED)
+		).add(new CommandHelp("enable", SkriptColor.DARK_CYAN)
 			.add("all")
 			.add("<script>")
-		).add(new CommandHelp("disable", SkriptColor.DARK_RED)
+		).add(new CommandHelp("disable", SkriptColor.DARK_CYAN)
 			.add("all")
 			.add("<script>")
-		).add(new CommandHelp("update", SkriptColor.DARK_RED)
+		).add(new CommandHelp("update", SkriptColor.DARK_CYAN)
 			.add("check")
 			.add("changes")
 			.add("download")
@@ -200,7 +200,11 @@ public class SkriptCommand implements CommandExecutor {
 								if (scriptInfo.files == 0) {
 									info(sender, "reload.empty folder", fileName);
 								} else {
-									reloaded(sender, logHandler, timingLogHandler, "x scripts in folder", fileName, scriptInfo.files);
+									if (logHandler.numErrors() == 0) {
+										reloaded(sender, logHandler, timingLogHandler, "x scripts in folder success", fileName, scriptInfo.files);
+									} else {
+										reloaded(sender, logHandler, timingLogHandler, "x scripts in folder error", fileName, scriptInfo.files);
+									}
 								}
 							});
 					}

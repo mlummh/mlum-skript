@@ -18,13 +18,14 @@
  */
 package ch.njol.skript.timings;
 
+import org.jetbrains.annotations.Nullable;
+
 import ch.njol.skript.Skript;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsManager;
 import com.google.common.base.Preconditions;
 import org.bukkit.plugin.Plugin;
-import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
@@ -96,5 +97,5 @@ public class SkriptTimings {
 		}
 		//return TimingsManager.getHandler(plugin.getName(), name, groupHandler);
 	}
-	
+
 }
