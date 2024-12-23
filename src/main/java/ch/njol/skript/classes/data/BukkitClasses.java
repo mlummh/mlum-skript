@@ -758,7 +758,7 @@ public class BukkitClasses {
 								return Bukkit.getOfflinePlayer(UUID.fromString(s));
 							else if (!SkriptConfig.playerNameRegexPattern.value().matcher(s).matches())
 								return null;
-							return Bukkit.getOfflinePlayer(s);
+							return Bukkit.getOfflinePlayerIfCached(s);
 						}
 						assert false;
 						return null;

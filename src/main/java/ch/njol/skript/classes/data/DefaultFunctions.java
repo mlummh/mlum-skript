@@ -560,12 +560,9 @@ public class DefaultFunctions {
 			.since("2.8.0");
 
 		{ // offline player function
-			boolean hasIfCached = Skript.methodExists(Bukkit.class, "getOfflinePlayerIfCached", String.class);
-
 			List<Parameter<?>> params = new ArrayList<>();
 			params.add(new Parameter<>("nameOrUUID", DefaultClasses.STRING, true, null));
-			if (hasIfCached)
-				params.add(new Parameter<>("allowLookups", DefaultClasses.BOOLEAN, true, new SimpleLiteral<>(true, true)));
+			params.add(new Parameter<>("allowLookups", DefaultClasses.BOOLEAN, true, new SimpleLiteral<>(false, false)));
 
 			Functions.registerFunction(new SimpleJavaFunction<OfflinePlayer>("offlineplayer", params.toArray(new Parameter[0]),
 				DefaultClasses.OFFLINE_PLAYER, true) {
@@ -583,7 +580,7 @@ public class DefaultFunctions {
 
 					if (uuid != null) {
 						result = Bukkit.getOfflinePlayer(uuid); // doesn't do lookups
-					} else if (hasIfCached && !((Boolean) params[1][0])) {
+					} else if (!((Boolean) params[1][0])) {
 						result = Bukkit.getOfflinePlayerIfCached(name);
 						if (result == null)
 							return new OfflinePlayer[0];
