@@ -68,9 +68,6 @@ public class Timespan implements YggdrasilSerializable, Comparable<Timespan> { /
 	}
 
 	private static final List<NonNullPair<Noun, Long>> SIMPLE_VALUES = Arrays.asList(
-		new NonNullPair<>(TimePeriod.YEAR.name, TimePeriod.YEAR.time),
-		new NonNullPair<>(TimePeriod.MONTH.name, TimePeriod.MONTH.time),
-		new NonNullPair<>(TimePeriod.WEEK.name, TimePeriod.WEEK.time),
 		new NonNullPair<>(TimePeriod.DAY.name, TimePeriod.DAY.time),
 		new NonNullPair<>(TimePeriod.HOUR.name, TimePeriod.HOUR.time),
 		new NonNullPair<>(TimePeriod.MINUTE.name, TimePeriod.MINUTE.time),
