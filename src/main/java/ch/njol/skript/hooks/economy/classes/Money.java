@@ -1,40 +1,21 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.hooks.economy.classes;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.classes.data.JavaClasses;
-import org.jetbrains.annotations.Nullable;
-
 import ch.njol.skript.classes.ClassInfo;
-import org.skriptlang.skript.lang.arithmetic.Arithmetics;
-import org.skriptlang.skript.lang.arithmetic.Operator;
-import org.skriptlang.skript.lang.comparator.Comparator;
-import org.skriptlang.skript.lang.converter.Converter;
 import ch.njol.skript.classes.Parser;
+import ch.njol.skript.classes.data.JavaClasses;
 import ch.njol.skript.hooks.VaultHook;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
-import org.skriptlang.skript.lang.comparator.Comparators;
-import org.skriptlang.skript.lang.converter.Converters;
 import ch.njol.util.StringUtils;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.lang.arithmetic.Arithmetics;
+import org.skriptlang.skript.lang.arithmetic.Operator;
+import org.skriptlang.skript.lang.comparator.Comparator;
+import org.skriptlang.skript.lang.comparator.Comparators;
 import org.skriptlang.skript.lang.comparator.Relation;
+import org.skriptlang.skript.lang.converter.Converter;
+import org.skriptlang.skript.lang.converter.Converters;
 
 /**
  * @author Peter Güttinger
@@ -158,7 +139,7 @@ public class Money {
 
 	@Nullable
 	private static Double parseDouble(String s) {
-		if (!JavaClasses.NUMBER_PATTERN.matcher(s).matches())
+		if (!JavaClasses.DECIMAL_PATTERN.matcher(s).matches())
 			return null;
 		try {
 			return Double.parseDouble(s);

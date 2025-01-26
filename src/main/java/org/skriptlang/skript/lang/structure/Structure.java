@@ -1,41 +1,17 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package org.skriptlang.skript.lang.structure;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.config.SimpleNode;
-import ch.njol.skript.lang.Debuggable;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.Literal;
-import ch.njol.skript.lang.ParseContext;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.lang.SyntaxElement;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.log.ParseLogHandler;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.iterator.CheckedIterator;
 import ch.njol.util.coll.iterator.ConsumingIterator;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.entry.EntryContainer;
@@ -96,8 +72,7 @@ public abstract class Structure implements SyntaxElement, Debuggable {
 	 * If the EntryContainer is needed outside of {@link #init(Literal[], int, ParseResult, EntryContainer)},
 	 * the Structure should keep a reference to it.
 	 */
-	@Deprecated
-	@ApiStatus.ScheduledForRemoval
+	@Deprecated(forRemoval = true)
 	public final EntryContainer getEntryContainer() {
 		if (entryContainer == null)
 			throw new IllegalStateException("This Structure hasn't been initialized!");
@@ -113,7 +88,7 @@ public abstract class Structure implements SyntaxElement, Debuggable {
 		StructureInfo<? extends Structure> structureInfo = structureData.structureInfo;
 		assert structureInfo != null;
 
-		if (structureInfo.simple) { // simple structures do not have validators
+		if (structureData.node instanceof SimpleNode) { // simple structures do not have validators
 			return init(literals, matchedPattern, parseResult, null);
 		}
 
@@ -195,6 +170,11 @@ public abstract class Structure implements SyntaxElement, Debuggable {
 		return toString(null, false);
 	}
 
+	@Override
+	public @NotNull String getSyntaxTypeName() {
+		return "structure";
+	}
+
 	@Nullable
 	public static Structure parse(String expr, Node node, @Nullable String defaultError) {
 		return parse(expr, node, defaultError, Skript.getStructures().iterator());
@@ -206,10 +186,10 @@ public abstract class Structure implements SyntaxElement, Debuggable {
 			throw new IllegalArgumentException("only simple or section nodes may be parsed as a structure");
 		ParserInstance.get().getData(StructureData.class).node = node;
 
-		if (node instanceof SimpleNode) { // only allow simple structures for simple nodes
-			iterator = new CheckedIterator<>(iterator, item -> item != null && item.simple);
-		} else { // only allow non-simple structures for section nodes
-			iterator = new CheckedIterator<>(iterator, item -> item != null && !item.simple);
+		if (node instanceof SimpleNode) { // filter out section only structures
+			iterator = new CheckedIterator<>(iterator, item -> item != null && item.nodeType.canBeSimple());
+		} else { // filter out simple only structures
+			iterator = new CheckedIterator<>(iterator, item -> item != null && item.nodeType.canBeSection());
 		}
 		iterator = new ConsumingIterator<>(iterator, elementInfo -> ParserInstance.get().getData(StructureData.class).structureInfo = elementInfo);
 

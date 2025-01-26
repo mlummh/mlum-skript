@@ -1,33 +1,5 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.effects;
 
-import java.util.Arrays;
-import java.util.Iterator;
-
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.server.ServerListPingEvent;
-import org.jetbrains.annotations.Nullable;
-
-import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
-import com.google.common.collect.Iterators;
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -37,6 +9,15 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
+import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
+import com.google.common.collect.Iterators;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.server.ServerListPingEvent;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.Iterator;
 
 @Name("Hide Player from Server List")
 @Description({"Hides a player from the <a href='expressions.html#ExprHoverList'>hover list</a> " +
@@ -74,11 +55,12 @@ public class EffHidePlayerFromServerList extends Effect {
 	}
 
 	@Override
+	@SuppressWarnings("removal")
 	protected void execute(Event e) {
 		if (!(e instanceof ServerListPingEvent))
 			return;
 
-		Iterator<Player> it = ((ServerListPingEvent) e).iterator();		
+		Iterator<Player> it = ((ServerListPingEvent) e).iterator();
 		Iterators.removeAll(it, Arrays.asList(players.getArray(e)));
 	}
 

@@ -1,29 +1,4 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
-import java.util.concurrent.CompletableFuture;
-
-import org.bukkit.command.CommandSender;
 
 import ch.njol.skript.localization.ArgsMessage;
 import ch.njol.skript.localization.Message;
@@ -33,6 +8,12 @@ import ch.njol.skript.update.UpdateManifest;
 import ch.njol.skript.update.Updater;
 import ch.njol.skript.util.chat.BungeeConverter;
 import ch.njol.skript.util.chat.ChatMessages;
+import org.bukkit.command.CommandSender;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Skript's update checker.

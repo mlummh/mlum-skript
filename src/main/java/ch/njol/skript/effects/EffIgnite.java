@@ -1,29 +1,4 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.effects;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.jetbrains.annotations.Nullable;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
@@ -35,6 +10,12 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.Timespan;
 import ch.njol.util.Kleenean;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.jetbrains.annotations.Nullable;
 
 @Name("Ignite/Extinguish")
 @Description("Lights entities on fire or extinguishes them.")
@@ -78,7 +59,7 @@ public class EffIgnite extends Effect {
 			Timespan timespan = this.duration.getSingle(event);
 			if (timespan == null)
 				return;
-			duration = (int) timespan.getTicks();
+			duration = (int) timespan.getAs(Timespan.TimePeriod.TICK);
 		}
 		for (Entity entity : entities.getArray(event)) {
 			if (event instanceof EntityDamageEvent && ((EntityDamageEvent) event).getEntity() == entity && !Delay.isDelayed(event)) {
@@ -99,7 +80,7 @@ public class EffIgnite extends Effect {
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
 		if (ignite)
-			return "set " + entities.toString(event, debug) + " on fire for " + (duration != null ? duration.toString(event, debug) : Timespan.fromTicks(DEFAULT_DURATION).toString());
+			return "set " + entities.toString(event, debug) + " on fire for " + (duration != null ? duration.toString(event, debug) : new Timespan(Timespan.TimePeriod.TICK, DEFAULT_DURATION).toString());
 		else
 			return "extinguish " + entities.toString(event, debug);
 	}

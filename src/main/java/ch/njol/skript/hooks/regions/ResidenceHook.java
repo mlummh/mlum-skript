@@ -1,32 +1,15 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.hooks.regions;
 
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.StreamCorruptedException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
+import ch.njol.skript.hooks.regions.WorldGuardHook.WorldGuardRegion;
+import ch.njol.skript.hooks.regions.classes.Region;
+import ch.njol.skript.variables.Variables;
+import ch.njol.yggdrasil.Fields;
+import ch.njol.yggdrasil.YggdrasilID;
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.containers.Flags;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
+import com.bekvon.bukkit.residence.protection.ResidencePermissions;
+import com.google.common.base.Objects;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -34,17 +17,10 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.containers.Flags;
-import com.bekvon.bukkit.residence.protection.ClaimedResidence;
-import com.bekvon.bukkit.residence.protection.ResidencePermissions;
-import com.google.common.base.Objects;
-
-import ch.njol.skript.hooks.regions.WorldGuardHook.WorldGuardRegion;
-import ch.njol.skript.hooks.regions.classes.Region;
-import ch.njol.skript.variables.Variables;
-import ch.njol.yggdrasil.Fields;
-import ch.njol.yggdrasil.YggdrasilID;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.StreamCorruptedException;
+import java.util.*;
 
 /**
  * Hook for Residence protection plugin. Currently supports

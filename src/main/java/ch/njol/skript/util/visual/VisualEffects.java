@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.util.visual;
 
 import ch.njol.skript.Skript;
@@ -26,10 +8,7 @@ import ch.njol.skript.lang.SyntaxElementInfo;
 import ch.njol.skript.localization.Language;
 import ch.njol.skript.localization.Noun;
 import ch.njol.skript.util.Color;
-import ch.njol.skript.util.ColorRGB;
-import ch.njol.skript.util.Direction;
-import ch.njol.skript.util.SkriptColor;
-import ch.njol.skript.util.Timespan;
+import ch.njol.skript.util.*;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.StringUtils;
 import ch.njol.util.coll.iterator.SingleItemIterator;
@@ -41,12 +20,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -227,7 +201,7 @@ public class VisualEffects {
 			// TODO test how this works
 			registerDataSupplier("Particle.NOTE", (raw, location) -> {
 				int colorValue = (int) (((Number) raw).floatValue() * 255);
-				ColorRGB color = new ColorRGB(colorValue, 0, 0);
+				ColorRGB color = ColorRGB.fromRGB(colorValue, 0, 0);
 				return new ParticleOption(color, 1);
 			});
 
@@ -238,7 +212,7 @@ public class VisualEffects {
 			registerDataSupplier("Particle.SHRIEK", (raw, location) -> {
 				int delay = 0;
 				if (raw instanceof Timespan)
-					delay = (int) Math.min(Math.max(((Timespan) raw).getTicks(), 0), Integer.MAX_VALUE);
+					delay = (int) Math.min(Math.max(((Timespan) raw).getAs(Timespan.TimePeriod.TICK), 0), Integer.MAX_VALUE);
 				return delay;
 			});
 
@@ -249,23 +223,24 @@ public class VisualEffects {
 	}
 
 	// exists to avoid NoClassDefFoundError from Vibration
+	@SuppressWarnings({"removal"})
 	private static final class VibrationUtils {
 		private static Vibration buildVibration(Object[] data, Location location) {
 			int arrivalTime = -1;
 			if (data[1] != null)
-				arrivalTime = (int) Math.min(Math.max(((Timespan) data[1]).getTicks(), 0), Integer.MAX_VALUE);
+				arrivalTime = (int) Math.min(Math.max(((Timespan) data[1]).getAs(Timespan.TimePeriod.TICK), 0), Integer.MAX_VALUE);
 			if (data[0] instanceof Entity) {
 				Entity entity = (Entity) data[0];
 				if (arrivalTime == -1)
 					arrivalTime = (int) (location.distance(entity.getLocation()) / 20);
-				//noinspection removal - new constructor only exists on newer versions
+				// new constructor only exists on newer versions
 				return new Vibration(location, new Vibration.Destination.EntityDestination(entity), arrivalTime);
 			}
 			// assume it's a location
 			Location destination = data[0] != null ? (Location) data[0] : location;
 			if (arrivalTime == -1)
 				arrivalTime = (int) (location.distance(destination) / 20);
-			//noinspection removal - new constructor only exists on newer versions
+			// new constructor only exists on newer versions
 			return new Vibration(location, new Vibration.Destination.BlockDestination(destination), arrivalTime);
 		}
 	}
