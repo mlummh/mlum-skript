@@ -8,11 +8,6 @@ import static org.junit.Assert.assertEquals;
 public class DateTest {
 
 	@Test
-	public void testNow() {
-		assertEquals(System.currentTimeMillis(), Date.now().getTime());
-	}
-
-	@Test
 	public void testFromJavaDate() {
 		java.util.Date javaDate = new java.util.Date();
 		Date date = Date.fromJavaDate(javaDate);

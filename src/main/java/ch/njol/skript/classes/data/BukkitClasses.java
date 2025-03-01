@@ -1535,6 +1535,15 @@ public class BukkitClasses {
 					.description("Teleport Flags are settings to retain during a teleport.")
 					.requiredPlugins("Paper 1.19+")
 					.since("2.10"));
+
+		Classes.registerClass(new ClassInfo<>(Vehicle.class, "vehicle")
+			.user("vehicles?")
+			.name("Vehicle")
+			.description("Represents a vehicle.")
+			.since("2.10.2")
+			.changer(DefaultChangers.entityChanger)
+		);
+
 	}
 
 }

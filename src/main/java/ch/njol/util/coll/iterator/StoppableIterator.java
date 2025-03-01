@@ -7,8 +7,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * @author Peter Güttinger
+ * @deprecated unused
  */
+@Deprecated
 public class StoppableIterator<T> implements Iterator<T> {
 	
 	private final Iterator<T> iter;
